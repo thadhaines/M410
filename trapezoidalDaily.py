@@ -1,22 +1,24 @@
-""" File to test the midpoint rule for integration 
+""" File to test the trapezodial rule for integration 
 M410 
 Thad Haines
-02/23/19
+02/25/19
+Using ipy -> Make sure to explicitly use decimals for proper casting...
 """
 import math
 #import matplotlib.pyplot as plt # for plotting
 
 def f(x):
     """Function that is to be integrated"""
-    return (2*math.sin(10*x+1)+1)
+    return (2.0*math.sin(10.0*x+1.0)+1.0)
 
 def fpp(x):
     """Double prime of f (used for error calculation)"""
-    return (-200*math.sin(10*x+1))
+    return (-200.0*math.sin(10.0*x+1.0))
 
 def F(x):
     """Antiderivative (i.e. integrated function) of f"""
-    return (x - (1/5)*math.cos(10*x+1) )
+    soln = x - (1.0/5.0)*math.cos(10.0*x+1.0) 
+    return soln
 
 def midpoint(f, x0, h):
     """Midpoint integration
@@ -24,10 +26,18 @@ def midpoint(f, x0, h):
     x0 = left hand point of stencil
     h = step size
     """
-    return 2*h*f(x0+h);
+    return 2.0*h*f(x0+h);
 
 def midpointError(fpp, h, xi):
     """Return calculated error"""
+    return (h**3*fpp(xi))
+
+def trapezoidal(f, x0, h):
+    """Calculate area via trapezoidal rule"""
+    return (h/2.0 * (f(x0)+f(x0+h)))
+
+def tzError(fpp, h, xi):
+    """Return calculated error estimate"""
     return (h**3*fpp(xi))
 
 def checkInput(userInput):
@@ -37,7 +47,7 @@ def checkInput(userInput):
     return 1
 
 if __name__ == "__main__":
-    print("Midpoint rule")
+    print("Trapezoidal rule")
     print("f = 2*math.sin(10*x+1)+1")
     print("F = x - (1/5)*math.cos(10*x+1)")
     print("Enter 'exit' to exit (no quotes)")
@@ -60,27 +70,31 @@ if __name__ == "__main__":
 
         # set and calculate bound of integration
         a = x0
-        b = 2*h+x0
+        b = h+x0
 
-        mpApprox = midpoint(f,x0,h)
+        tzApprox = trapezoidal(f,x0,h)
 
         # find xi and predicted error bound
+        # check for largest bound
         if abs(fpp(a)) > abs(fpp(b)):
             xi = a
         else:
             xi = b
+        # check center point also
+        if abs(fpp(x0+0.5*h)) > abs(fpp(xi)):
+            xi = x0
 
-        mpErrBound = abs(midpointError(fpp, h, xi))
+        tzErrBound = abs(tzError(fpp, h, xi))
 
         # Calculate exact integral
         exactInt = F(b) - F(a)
 
         # Calculate actual midpoint error
-        mpErr = abs(mpApprox - exactInt)
+        tzErr = abs(tzApprox - exactInt)
 
         print("***")
-        print("a\tb\th\tMPaprx\terrBnd\tErr\tExactIntegral")
+        print("a\tb\th\tTZaprx\terrBnd\tErr\tExactIntegral")
         print("%.3g\t%.3g\t%.3g\t%.3g\t%.3g\t%.3g\t%.3g\t" %
-              (a,b,h,mpApprox,mpErrBound,mpErr,exactInt))
+              (a,b,h,tzApprox,tzErrBound,tzErr,exactInt))
         print("***")
     
