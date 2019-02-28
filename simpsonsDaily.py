@@ -97,7 +97,7 @@ if __name__ == "__main__":
         # calculate approximates
         tzApprox = trapezoidal(f,x0,hTz)
         s13Approx = simp13(f, x0, h13)
-        s38Approx = simp13(f, x0, h38)
+        s38Approx = simp38(f, x0, h38)
 
         # find xiTz and predicted error bound - Trapezoidal Error
         # check for largest bound
